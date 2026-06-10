@@ -14,31 +14,37 @@ stock-performance CLI built with `terminal-report`.
 
 ## Install
 
-Clone the repo, then point your agent config at a skill. I use the
-`~/.agents/skills` (source) + `~/.claude/skills` (symlink) layout, and this repo
-mirrors it — so "installing" is just symlinking a skill into your config:
+Easiest is the [`skills` CLI](https://github.com/vercel-labs/skills) (`npx
+skills`) — point it at this repo and the skill you want:
 
 ```bash
-git clone <this-repo> ~/code/skills
-cd ~/code/skills
-
-# symlink the skill into your global agent config
-ln -s "$PWD/.agents/skills/terminal-report" ~/.agents/skills/terminal-report
-ln -s ../../.agents/skills/terminal-report ~/.claude/skills/terminal-report
+# install terminal-report for Claude Code, globally (~/.claude/skills)
+npx skills add <owner>/skills --skill terminal-report -a claude-code -g
 ```
 
-Claude Code reads `~/.claude/skills`; other agents read `~/.agents/skills`.
-Symlinking (rather than copying) keeps you in sync with the repo.
+- `-a, --agent` — target agent(s): `claude-code`, `cursor`, `cline`, `codex`, … (omit to choose interactively)
+- `-g, --global` — install to `~/<agent>/skills` instead of the current project
+- `--copy` — copy the files instead of symlinking (default is a symlink, so you stay in sync)
+- `--list` — see what's available without installing
 
-Prefer not to symlink? `cp -R .agents/skills/terminal-report ~/.agents/skills/`
-works too — you just won't get updates automatically.
+The CLI symlinks the skill into your agent's skills directory by default — so
+you still get the live-updating symlink setup, just managed for you. Replace
+`<owner>/skills` with this repo's `owner/repo` once it's on GitHub.
+
+**Fallback — clone and copy:** if you'd rather not use the CLI:
+
+```bash
+git clone https://github.com/<owner>/skills
+cp -R skills/terminal-report ~/.claude/skills/                         # Claude Code, global
+# …or symlink to stay in sync:
+ln -s "$PWD/skills/terminal-report" ~/.claude/skills/terminal-report
+```
 
 ## Layout
 
 ```
-.agents/skills/<name>/      # the skill (source of truth)
-.claude/skills/<name>  ->   ../../.agents/skills/<name>   # symlink Claude Code reads
-docs/                       # how-tos and examples
+skills/<name>/SKILL.md   # each skill, in the flat layout the CLI discovers
+docs/                    # how-tos and examples
 ```
 
 ## License

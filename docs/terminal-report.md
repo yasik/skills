@@ -35,8 +35,8 @@ It ships in two ports that print the **same** demo report, so you can preview th
 aesthetic before building anything:
 
 ```bash
-python .agents/skills/terminal-report/scripts/termstyle.py     # Python 3.x
-node   .agents/skills/terminal-report/scripts/termstyle.ts      # Node 23+ / Bun
+python skills/terminal-report/scripts/termstyle.py     # Python 3.x
+node   skills/terminal-report/scripts/termstyle.ts      # Node 23+ / Bun
 ```
 
 Color auto-disables when stdout isn't a terminal (piped, redirected, or
@@ -73,12 +73,12 @@ columns still line up.
 
 ## Going deeper
 
-- `.agents/skills/terminal-report/SKILL.md` — the full skill (principles +
+- `skills/terminal-report/SKILL.md` — the full skill (principles +
   workflow + the API in detail).
-- `.agents/skills/terminal-report/references/ansi.md` — ANSI/SGR cheat sheet,
+- `skills/terminal-report/references/ansi.md` — ANSI/SGR cheat sheet,
   the 256-color palette, the diverging-bar math, terminal-safety rules, and how
   to port the primitives to Go / Rust / raw JS.
-- `.agents/skills/terminal-report/evals/RESULTS.md` — how the skill's triggering
+- `skills/terminal-report/evals/RESULTS.md` — how the skill's triggering
   was measured (and the gotcha that the standard harness hits for an
   already-installed skill).
 
