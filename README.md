@@ -1,12 +1,7 @@
 # Skills
 
 A small, growing collection of skills I've productized for coding agents
-(Claude Code and anything else that reads agent skills). Right now there's
-exactly one — more will land here as they prove themselves.
-
-A *skill* is a folder with a `SKILL.md` (instructions + a description that tells
-the agent when to reach for it) and any scripts or references it bundles. The
-agent loads the description always, and the rest only when a task calls for it.
+(Claude Code and anything else that reads agent skills).
 
 ## What's inside
 
@@ -33,9 +28,7 @@ ln -s ../../.agents/skills/terminal-report ~/.claude/skills/terminal-report
 ```
 
 Claude Code reads `~/.claude/skills`; other agents read `~/.agents/skills`.
-Symlinking (rather than copying) keeps you in sync with the repo. If you already
-have a `terminal-report` folder in `~/.agents/skills` from earlier work, remove
-it first so this repo is the single source of truth.
+Symlinking (rather than copying) keeps you in sync with the repo.
 
 Prefer not to symlink? `cp -R .agents/skills/terminal-report ~/.agents/skills/`
 works too — you just won't get updates automatically.

@@ -1,58 +1,54 @@
-# Example: a stock-performance CLI
+# Example: a stock-performance snapshot
 
-`finterm` is a small command-line tool built with the **terminal-report** skill.
-You give it tickers and a lookback window; it pulls daily prices, computes
-per-ticker and basket metrics, and prints a polished report — then asks Claude
-for a short narration. It's a separate project (a *consumer* of the skill), shown
-here to demonstrate what the skill produces in a real tool.
+With the skill installed, there's nothing special to invoke — you just ask your
+agent to build a terminal tool or to print results nicely, and `terminal-report`
+kicks in to shape the output. Here's the kind of prompt that triggers it and
+produces something close to the screenshot below (your tickers and numbers will
+differ).
 
-Below: the full 13F book of **Situational Awareness LP** (Leopold Aschenbrenner's
-fund), 29 positions resolved from their latest SEC filing, over a 30-day window.
+## The prompt
 
-![finterm — Situational Awareness 13F, 30-day performance](images/finterm-13f.png)
+> Build me a small Python CLI that takes a list of stock tickers and a lookback
+> window (like `30d`) and prints an aggregate performance snapshot in the
+> terminal. For each ticker show the last price, the return over the window, a
+> sparkline of its price trend, RSI, where it sits in its 52-week range, its
+> volatility, and max drawdown — sorted by return, with a colored bar next to
+> each row showing its return versus the basket. Add an equal-weight basket
+> summary and a one-paragraph narration of what happened. Pull daily prices from
+> Financial Modeling Prep (my `FMP_API_KEY` is in `.env`). Make the output look
+> polished, like a dashboard.
 
-## What you're looking at (every element comes from the skill)
+![A stock-performance snapshot rendered with terminal-report](images/finterm-13f.png)
 
-- **Tagged progress log** — `[env] [fmp] [warn] [calc] [ai] [done]`. The `[warn]`
-  line shows graceful degradation: a ticker with too little data is skipped, not
-  fatal (29 requested → 28 scored).
-- **Section header** — `PERFORMANCE` with a muted subtitle and a rule.
-- **Aligned table** — right-aligned numerics, left-aligned labels, sorted by
-  return. Columns: `last`, `ret` (green up / red down), a **sparkline** trend,
-  `rsi` (red ≥70 overbought, green ≤30 oversold), `52w%` (green near highs, red
-  near lows), `vol` (green→amber→red scale), `maxDD`.
-- **Diverging bars** — each name's return relative to the basket, fanning green
-  to the right and red to the left of a zero axis. The signature visual.
-- **Basket summary + Claude narration** — an equal-weight roll-up, then a 2–4
-  sentence read of the period that uses the actual numbers.
+## What the skill contributed
 
-## The command
+The agent writes the data-fetching and metrics on its own. The **look** — and
+the design choices behind it — come from `terminal-report`:
 
-```bash
-cd ~/code/personal/finterm
-uv run finterm.py SMH,NVDA,SNDK,ORCL,MU,AVGO,AMD,BE,TSM,CRWV,ASML,IREN,CORZ,APLD,INTC,RIOT,CLSK,SEI,TE,BITF,BTDR,PSIX,GLW,WYFI,BW,SHAZ,PUMP,INFY,HIVE 30d
-```
+- **Tagged progress log** (`[env] [fmp] [calc] [ai] [done]`) and the `[warn]`
+  line that skips a ticker with too little data instead of crashing — graceful
+  degradation is baked in.
+- **A sorted, aligned table** with right-aligned numbers, a muted/dimmed
+  scaffold, and **inline sparklines** per row.
+- **Semantic color, not decoration**: green/red returns, an RSI that flags
+  overbought/oversold, a green→amber→red volatility scale.
+- **Diverging bars** fanning green-right / red-left around a zero axis — the
+  signature "is this better or worse than the pack" visual.
 
-Tickers are ordered by reported 13F position size (largest first). Swap the
-window for `90d`, `100d`, or `252d`.
+## Prompts that also trigger it
 
-## How the ticker list was derived
+You don't have to spell out columns and bars. Any of these reach for the skill:
 
-The positions came straight from SEC EDGAR — Situational Awareness LP
-(CIK 2045724), 13F-HR filed 2026-05-18 (holdings as of 2026-03-31). The filing's
-information table lists 42 line items by CUSIP; collapsing put/call/multi-lot
-variants to unique underlyings gives 29 securities, each CUSIP resolved to a
-ticker.
+> My script just dumps numbers — make its output readable with aligned columns
+> and color the worst performers red.
 
-**Caveats worth keeping in mind:** a 13F is a quarter-old snapshot of US-listed
-long equity and options only — no shorts, cash, or direction. Several of these
-names were held (wholly or partly) as **puts** (e.g. NVDA, ORCL, AVGO, AMD, MU,
-TSM, ASML, INTC), so the table shows each underlying's price move, **not** the
-fund's P&L or whether they were long or short it. The largest reported line,
-SMH (the semiconductor ETF), was a put.
+> Turn this analysis into a little CLI and print a leaderboard with a bar next to
+> each row.
 
-## Run it for the screenshot
+> Show the results like a terminal dashboard.
 
-Color only shows in a real terminal (it auto-disables when piped). Run the
-command in your terminal, widen the window so the table doesn't wrap, and
-capture it.
+## Tip
+
+Color only appears in a real terminal — it auto-disables when output is piped or
+redirected. Run the tool directly in your terminal (and widen the window so the
+table doesn't wrap) before capturing a screenshot.
