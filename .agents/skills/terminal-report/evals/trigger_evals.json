@@ -1,0 +1,22 @@
+[
+  {"query": "i wrote a python script that analyzes my aws bill by service and prints a table, but it looks like garbage — plain text columns that don't line up. can you make the output actually readable, aligned columns, and color the expensive services red?", "should_trigger": true},
+  {"query": "building a little cli that pulls my github notifications and summarizes them. right now it just dumps json to stdout. i want it to print a nice summary in the terminal when it finishes", "should_trigger": true},
+  {"query": "i have a benchmark runner and i want a progress section that shows a [PASS]/[FAIL] tag as each test runs, then a summary table at the end with the timings", "should_trigger": true},
+  {"query": "saw someone post a terminal screenshot where each row had a little colored bar next to it showing relative magnitude, like a mini chart inside the table. how do i make my analysis script print output like that?", "should_trigger": true},
+  {"query": "my data pipeline prints a wall of log lines and i can never tell where it is. i'd like section headers and to dim the less important stuff so the key numbers stand out", "should_trigger": true},
+  {"query": "write a cli tool that reads a folder of csv files and reports row counts and null percentages per column — make the output look polished, not just bare print statements", "should_trigger": true},
+  {"query": "i'm scoring 200 model checkpoints and want to show a leaderboard in the terminal sorted by accuracy, with a bar next to each one so i can eyeball the spread", "should_trigger": true},
+  {"query": "can you add a little sparkline showing the 7-day trend next to each metric in my `status` command output?", "should_trigger": true},
+  {"query": "the output of my deploy script is one giant blob. break it into sections with headers and use green/red so i can see at a glance what succeeded and what failed", "should_trigger": true},
+  {"query": "make a terminal dashboard that summarizes my running cloud costs by region, with the biggest spenders highlighted", "should_trigger": true},
+  {"query": "build me a web dashboard in react that charts our daily active users with recharts and a date-range picker", "should_trigger": false},
+  {"query": "i have a matplotlib script already — export the revenue-over-time chart as a high-res png so i can drop it into the board slide deck", "should_trigger": false},
+  {"query": "my iterm2 colors look washed out and the comments are unreadable. help me pick a better color scheme / theme for my terminal", "should_trigger": false},
+  {"query": "strip all the ansi escape codes out of this captured CI log file so i can paste clean text into a jira ticket", "should_trigger": false},
+  {"query": "set up structured json logging with the python logging module and ship the logs to datadog with correlation ids", "should_trigger": false},
+  {"query": "review this chart i made and tell me whether it follows good data-viz principles — is the truncated y-axis misleading the reader?", "should_trigger": false},
+  {"query": "build an interactive TUI with textual that has a sidebar, a scrollable log pane, and keyboard navigation between widgets", "should_trigger": false},
+  {"query": "convert this messy sales.xlsx into a clean csv and add a profit_margin column computed from revenue and cost", "should_trigger": false},
+  {"query": "generate a pdf invoice from this order json with our company logo at the top and a totals table", "should_trigger": false},
+  {"query": "explain how 256-color ansi escape codes work and how they differ from 24-bit truecolor", "should_trigger": false}
+]
