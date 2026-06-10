@@ -21,19 +21,25 @@ It deliberately stays out of the way for adjacent-but-different work: web/React
 dashboards, matplotlib/PNG charts, terminal *theme* config, stripping ANSI from
 logs, or full interactive TUIs (those want `textual`/`bubbletea`).
 
-## Quick start
+## Using it
 
-The heart of the skill is a zero-dependency renderer, shipped in two ports that
-print the **same** demo report. Run either to see the target aesthetic:
+There's nothing to install or wire up by hand. Ask your agent to build a
+terminal tool — or just to print some results nicely — and when the skill
+triggers it **copies the renderer** (`termstyle.py` or `termstyle.ts`, whichever
+matches your language) into your project and builds on its primitives. That
+vendoring is deliberate: the resulting tool stays self-contained and
+dependency-free, with no `pip install` and no runtime reliance on the skill
+being present. You don't touch the renderer yourself unless you want to.
+
+It ships in two ports that print the **same** demo report, so you can preview the
+aesthetic before building anything:
 
 ```bash
 python .agents/skills/terminal-report/scripts/termstyle.py     # Python 3.x
 node   .agents/skills/terminal-report/scripts/termstyle.ts      # Node 23+ / Bun
 ```
 
-Then copy the file into your project (`termstyle.py` or `termstyle.ts`) and
-build from its primitives. Copying keeps the tool dependency-free; adapt it
-freely. Color auto-disables when stdout isn't a terminal (piped, redirected, or
+Color auto-disables when stdout isn't a terminal (piped, redirected, or
 `NO_COLOR` set), so it never leaves escape codes in a `.csv` or CI log.
 
 ## The vocabulary
