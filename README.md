@@ -19,7 +19,7 @@ skills`) — point it at this repo and the skill you want:
 
 ```bash
 # install terminal-report for Claude Code, globally (~/.claude/skills)
-npx skills add <owner>/skills --skill terminal-report -a claude-code -g
+npx skills add yasik/skills --skill terminal-report -a claude-code -g
 ```
 
 - `-a, --agent` — target agent(s): `claude-code`, `cursor`, `cline`, `codex`, … (omit to choose interactively)
@@ -28,13 +28,12 @@ npx skills add <owner>/skills --skill terminal-report -a claude-code -g
 - `--list` — see what's available without installing
 
 The CLI symlinks the skill into your agent's skills directory by default — so
-you still get the live-updating symlink setup, just managed for you. Replace
-`<owner>/skills` with this repo's `owner/repo` once it's on GitHub.
+you still get the live-updating symlink setup, just managed for you.
 
 **Fallback — clone and copy:** if you'd rather not use the CLI:
 
 ```bash
-git clone https://github.com/<owner>/skills
+git clone https://github.com/yasik/skills
 cp -R skills/terminal-report ~/.claude/skills/                         # Claude Code, global
 # …or symlink to stay in sync:
 ln -s "$PWD/skills/terminal-report" ~/.claude/skills/terminal-report
