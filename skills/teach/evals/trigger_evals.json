@@ -1,0 +1,22 @@
+[
+  {"query": "teach me how kafka consumer groups and partition rebalancing actually work — i've used kafka for a year but the rebalancing part still confuses me and i keep getting it wrong in interviews", "should_trigger": true},
+  {"query": "i want to *really* understand the attention mechanism in transformers. i've read like 5 blog posts and i can follow the math but i don't have the intuition. break it down for me", "should_trigger": true},
+  {"query": "here's a link to the raft consensus paper https://raft.github.io/raft.pdf — can you walk me through it like a class? i've never done distributed systems", "should_trigger": true},
+  {"query": "explain monads to me. assume i know basic typescript but have never touched haskell. i want to actually get it this time not just nod along", "should_trigger": true},
+  {"query": "help me learn how a TLS 1.3 handshake works end to end — every cert, every key, what's encrypted when", "should_trigger": true},
+  {"query": "can you teach me the basics of options pricing and where black-scholes comes from? i know calculus and probability but zero finance", "should_trigger": true},
+  {"query": "got three links about CRDTs i need to get up to speed on for work, bring me up to speed: https://crdt.tech https://example.com/crdt-intro https://example.com/automerge-paper", "should_trigger": true},
+  {"query": "ELI5 but actually deep: what is git rebase really doing under the hood, and why does interactive rebase let me reorder and squash commits?", "should_trigger": true},
+  {"query": "i need to understand the key parts of the EU AI Act for a compliance review at my job next month. teach me what matters for a company shipping an ML product", "should_trigger": true},
+  {"query": "break down how a B-tree database index works with examples — why it stays balanced and why range scans are fast", "should_trigger": true},
+  {"query": "summarize this 40-page article into 3 bullet points so i can paste it into the standup notes, link is https://example.com/postmortem", "should_trigger": false},
+  {"query": "what's the difference between TCP and UDP? just need a one-line answer for a slack reply", "should_trigger": false},
+  {"query": "write me a python function that parses this CSV of transactions and returns total spend per category", "should_trigger": false},
+  {"query": "fix this bug — my react useEffect runs twice on mount and double-fires the analytics event", "should_trigger": false},
+  {"query": "give me a quick definition of idempotency, one sentence is fine", "should_trigger": false},
+  {"query": "translate this paragraph from the docs into spanish for our LATAM users", "should_trigger": false},
+  {"query": "proofread my blog post about our migration to postgres and tighten up the wording", "should_trigger": false},
+  {"query": "review my PR — it adds rate limiting to the login endpoint, want a second pair of eyes before i merge", "should_trigger": false},
+  {"query": "what version of node does this repo need? check the package.json and .nvmrc", "should_trigger": false},
+  {"query": "make me some flashcards / a quiz on spanish verb conjugations for my trip next week", "should_trigger": false}
+]

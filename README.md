@@ -8,6 +8,7 @@ A small, growing collection of skills I've productized for coding agents
 | Skill | What it does | Docs |
 |---|---|---|
 | **terminal-report** | Polished terminal output for CLIs and analysis tools — ANSI colors, aligned tables, sparklines, diverging bars, tagged progress logs. Triggers when you build a command-line tool or want output that looks "like a dashboard." | [docs/terminal-report.md](docs/terminal-report.md) |
+| **teach** | Turns a topic or a pile of links into one complete, self-paced lesson — chaptered, with the hardest concept slowed down and worked through, diagrams only where they help, and real citations to go deeper. Triggers on "teach me X", "explain this `<link>`", "help me understand …" — when the goal is understanding, not a TL;DR. | [docs/teach.md](docs/teach.md) |
 
 See it in action: [docs/examples/finterm-13f.md](docs/examples/finterm-13f.md) — a
 stock-performance CLI built with `terminal-report`.
