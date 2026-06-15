@@ -29,6 +29,32 @@ chapters the learner reads at their own pace. Not an interactive tutoring sessio
 — don't stop to ask "ready for the next part?" or "shall I continue?". Write the
 whole thing top to bottom so they can read, re-read, and skip around on their own.
 
+## Where the lesson goes
+
+The same lesson can be delivered three ways. Decide up front — it affects file
+paths and which charts render (ANSI works in a terminal, not in a `.md` file).
+Read the target from how the user phrases the request; **default to the terminal**
+and only ask when it's genuinely ambiguous.
+
+- **Terminal (default).** Write the full lesson straight into the conversation as
+  Markdown prose. Use this unless the user asked for something else.
+- **Markdown file.** When the user wants to keep it — "save it", "write it to a
+  file", "give me a `.md`" — write the lesson to a file. Use the path they name;
+  otherwise default to `./<topic-slug>.md` in the working directory. Tell them the
+  exact path you wrote.
+- **Obsidian vault.** When the user mentions Obsidian, "my vault", or "my notes",
+  write the lesson as a note inside their local vault: locate the vault(s), pick
+  one (ask if there's more than one), and save under a `teach/` folder by default —
+  or a folder the user names. Read `references/obsidian.md` for the full procedure
+  (finding vaults, choosing one, naming and placing the note) before you write.
+
+Skills don't receive parsed flags — the input is just natural-language text, so the
+target lives in the request's phrasing ("…and drop it in my Obsidian", "save it to
+a `.md`"). As a convenience, also honor a terse shorthand if the user types it —
+`--output=terminal|markdown|obsidian`, `--obsidian` / `--md`, or a trailing file
+path — but treat it as plain text you interpret, not a harness-parsed argument. An
+explicit choice in either form wins over asking.
+
 ## Step 1 — Get the real source material first
 
 Never teach from a guess about what a link says. Get the actual content before you
@@ -138,6 +164,16 @@ Keep diagrams inline and renderable: ASCII/Unicode for most things, a fenced
 they illustrate, not in a gallery. (For a polished standalone diagram artifact, a
 dedicated diagramming skill like `blueprinter` is the better tool — but that's the
 exception, not the default for a written lesson.)
+
+**Charts are different from diagrams.** When the point is *quantitative* —
+comparing magnitudes, a distribution, a trend over time, a before/after delta — a
+chart can land it faster than prose. If the lesson is going to the **terminal**,
+don't hand-roll the bars: the **`terminal-report`** skill ships a ready-made,
+zero-dependency ANSI renderer for magnitude/diverging bars, sparklines, and aligned
+tables — reach for it and reuse its primitives. For **Markdown-file or Obsidian**
+output, ANSI escape codes won't render (they'd show as raw bytes), so use a Markdown
+table or a `mermaid` chart there instead. Same bar as diagrams: only chart a number
+the learner actually needs to *feel the size of*, not every figure in the text.
 
 ```
 client ──TLS ClientHello──▶ server      a one-glance sketch of a handshake

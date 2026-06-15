@@ -45,8 +45,61 @@ to fire on them.
    a normal case and an edge case, to teach the boundary).
 5. **Diagrams only when they earn it** — ASCII/Unicode or inline `mermaid` for
    things that are spatial, structural, or sequential; prose for everything else.
+   For *quantitative* points it can borrow the `terminal-report` skill's ANSI
+   charts (terminal output only — files get Markdown tables or `mermaid` instead).
 6. **Cites real sources, easy → hard.** A short reading list, each entry labeled
    and verified — never a fabricated DOI or a plausible-but-wrong title.
+
+## Where it writes the lesson
+
+By default the lesson prints **straight into the terminal**. Just say so in the
+request — "save it to a file", "drop it in my vault" — and it can instead:
+
+- **Write a Markdown file** to a path you name, or `./<topic-slug>.md` by default.
+- **Drop a note into your Obsidian vault.** It finds your local vault(s) (asking
+  which one if you have several), then saves the lesson under a `teach/` folder
+  by default — or any folder you name.
+
+### Using each option
+
+Skills don't take parsed command-line flags — you just say what you want, and the
+skill reads the target from how you phrase it. (It also recognizes a terse
+`--output=…` / `--md` / `--obsidian` shorthand if you'd rather type that, but it's
+read as plain text, not a parsed argument.)
+
+**Terminal (default)** — the lesson prints inline; nothing extra to say:
+
+```
+teach me how Raft consensus works
+```
+
+**Markdown file** — ask it to save the lesson:
+
+```
+teach me how B-tree indexes work and save it to a file
+explain how vector clocks work, write it to ./notes/vector-clocks.md
+```
+
+If you don't name a path it writes `./<topic-slug>.md` (e.g. `./b-tree-indexes.md`)
+and tells you where it landed.
+
+**Obsidian** — mention your vault or notes:
+
+```
+teach me CRDTs and drop it in my Obsidian vault
+explain this paper <link> and save it to my notes under Learning/Distributed
+```
+
+It locates your local vault(s), asks which one if you have more than one, and saves
+the note under a `teach/` folder unless you name another (like `Learning/Distributed`
+above). When it's done it tells you the exact path and vault.
+
+Prefer the terse form? Shorthand like this works too, read as plain text:
+
+```
+/teach --md ./notes/raft.md how Raft consensus works
+/teach --obsidian how the Paxos algorithm works
+```
 
 The test every part of the lesson has to pass: *after reading this once, could you
 explain the crux to someone else?* Coverage isn't the goal; transfer is.
@@ -54,8 +107,10 @@ explain the crux to someone else?* Coverage isn't the goal; transfer is.
 ## Going deeper
 
 - `skills/teach/SKILL.md` — the full skill: the source-acquisition workflow,
-  the chaptering and deep-dive patterns, the diagram heuristic, and the citation
-  rules, each with the reasoning behind it.
+  the chaptering and deep-dive patterns, the diagram heuristic, the output targets,
+  and the citation rules, each with the reasoning behind it.
+- `skills/teach/references/obsidian.md` — how it locates Obsidian vaults, picks
+  one when there are several, and names/places the note.
 - `skills/teach/evals/trigger_evals.json` — the 20 queries (10 should-trigger,
   10 hard near-misses like "summarize this into 3 bullets" and "what's the
   difference between TCP and UDP") used to check that the description fires when it

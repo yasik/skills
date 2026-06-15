@@ -1,0 +1,90 @@
+# Writing the lesson into an Obsidian vault
+
+When the chosen output is Obsidian, the finished lesson becomes a Markdown note
+inside the user's vault. This covers locating vaults, picking one, and where and
+how to write the note.
+
+## What a vault is
+
+A vault is just a folder of Markdown files. The tell that a folder *is* a vault is
+a `.obsidian/` subdirectory (Obsidian's per-vault config). The note you write is a
+plain `.md` file anywhere inside that folder.
+
+## Locating the user's vault(s)
+
+Two complementary approaches — try the registry first, fall back to a search.
+
+### 1. The vault registry (fast, authoritative)
+
+Obsidian records every vault the user has opened in a single JSON file:
+
+| OS | Path |
+|---|---|
+| macOS | `~/Library/Application Support/obsidian/obsidian.json` |
+| Linux | `~/.config/obsidian/obsidian.json` |
+| Windows | `%APPDATA%\obsidian\obsidian.json` (i.e. `~/AppData/Roaming/obsidian/obsidian.json`) |
+
+Its shape:
+
+```json
+{
+  "vaults": {
+    "a1b2c3d4e5f6": { "path": "/Users/you/Notes", "ts": 1700000000000, "open": true },
+    "9f8e7d6c5b4a": { "path": "/Users/you/Work/Second Brain", "ts": 1699000000000 }
+  }
+}
+```
+
+Collect every `vaults.*.path`. The entry with `"open": true` (or the highest `ts`)
+is the most recently used — a good default to suggest. On macOS:
+
+```bash
+python3 -c "import json,os; d=json.load(open(os.path.expanduser('~/Library/Application Support/obsidian/obsidian.json'))); [print(v['path']) for v in d['vaults'].values()]"
+```
+
+### 2. Filesystem search (fallback)
+
+If the registry is missing — vault never opened in the desktop app, a portable
+install, or a non-standard config dir — search for `.obsidian/` directories:
+
+```bash
+find ~ -maxdepth 4 -type d -name .obsidian -not -path '*/node_modules/*' 2>/dev/null
+```
+
+The parent of each `.obsidian/` is a vault root. The depth limit keeps it fast;
+widen `-maxdepth` only if nothing turns up.
+
+## Choosing the vault
+
+- **None found** — say so, and ask the user to paste the vault path. If they'd
+  rather not, fall back to writing a plain Markdown file in the working directory.
+- **Exactly one** — use it.
+- **More than one** — ask which to use with the `AskUserQuestion` tool; list them
+  by path (or folder name), and offer the most-recently-used one as the default.
+
+## Where to put the note
+
+- **Folder.** Default to a `teach/` folder at the vault root. If the user named a
+  folder ("put it in my `Learning/CS` folder"), use that instead. Create it if it
+  doesn't exist: `mkdir -p "<vault>/<folder>"`.
+- **Filename.** A readable slug of the topic plus `.md` — e.g.
+  `teach/raft-consensus.md`. Strip characters illegal in filenames (`/ \ : * ? " < > |`).
+  If a file with that name already exists, don't clobber it silently — append a
+  disambiguator (a date or `-2`) or ask.
+
+## What to write
+
+- The same chaptered Markdown lesson you'd print to the terminal. Obsidian renders
+  standard Markdown, GitHub-style tables, and fenced ` ```mermaid ` blocks (built-in
+  Mermaid support), so diagrams and tables carry over unchanged.
+- **No ANSI codes.** Terminal-only charting (the `terminal-report` renderer) emits
+  escape sequences that show as raw bytes in a file — keep charts here as Markdown
+  tables or `mermaid`.
+- Optional, if it fits the user's setup: a short YAML frontmatter block
+  (`title`, `tags: [teach]`, the source links) at the top. Add `[[wikilinks]]` only
+  to notes you know exist — don't invent links.
+
+## After writing
+
+Tell the user the exact path you wrote and which vault it's in, so they can open it.
+If you created the `teach/` folder, mention that too.
