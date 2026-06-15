@@ -34,7 +34,7 @@ to fire on them.
    From links it fetches each one — and when a page is paywalled, login-walled,
    JavaScript-rendered, or comes back truncated, it falls back to a browser to load
    and scrape the rendered content rather than teaching from a thin guess.
-2. **Finds the crux.** It reads for the prerequisites (named up front so you can
+2. **Finds the hardest part.** It reads for the prerequisites (named up front so you can
    self-check) and the one concept where understanding usually breaks — then builds
    the whole lesson around slowing down there.
 3. **Writes the lesson, chaptered.** An orientation paragraph (what this is, why it
@@ -101,8 +101,30 @@ Prefer the terse form? Shorthand like this works too, read as plain text:
 /teach --obsidian how the Paxos algorithm works
 ```
 
+## What shape it produces
+
+By default you get the **full lesson**. Ask for a different shape and it adapts the
+same understanding — the source-reading and finding the hardest concept are identical, only the
+deliverable changes:
+
+- **Flashcards** — "make flashcards", "Anki cards": a deck of question→answer cards
+  for active recall, with the hardest concept getting the most cards. In a terminal you get a
+  clean Q/A list; in a file or Obsidian it's written in spaced-repetition syntax,
+  ready to review.
+- **Dense / concise** — "just a concise version", "cheat sheet": the mental model
+  compressed to its essence, scaffolding stripped. Best for review when you're
+  already close to the level (it's deliberately terser than a first-time learner
+  wants — it'll suggest the full lesson if that fits you better).
+
+Shape and destination mix freely:
+
+```
+make flashcards for how Raft consensus works and save them to my Obsidian vault
+teach me B-tree indexes, just a concise cheat sheet
+```
+
 The test every part of the lesson has to pass: *after reading this once, could you
-explain the crux to someone else?* Coverage isn't the goal; transfer is.
+explain the hardest concept to someone else?* Coverage isn't the goal; transfer is.
 
 ## Going deeper
 
@@ -111,6 +133,9 @@ explain the crux to someone else?* Coverage isn't the goal; transfer is.
   and the citation rules, each with the reasoning behind it.
 - `skills/teach/references/obsidian.md` — how it locates Obsidian vaults, picks
   one when there are several, and names/places the note.
+- `skills/teach/references/flashcards.md` — the flashcards style: writing good
+  cards and the per-destination syntax (terminal Q/A, Obsidian Spaced Repetition,
+  Anki import).
 - `skills/teach/evals/trigger_evals.json` — the 20 queries (10 should-trigger,
   10 hard near-misses like "summarize this into 3 bullets" and "what's the
   difference between TCP and UDP") used to check that the description fires when it

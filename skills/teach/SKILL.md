@@ -55,6 +55,36 @@ a `.md`"). As a convenience, also honor a terse shorthand if the user types it �
 path — but treat it as plain text you interpret, not a harness-parsed argument. An
 explicit choice in either form wins over asking.
 
+## What shape the lesson takes
+
+Alongside *where* it goes, decide *what shape* the output takes. Three styles;
+**default to the full lesson** and switch only when the user asks. Whichever you
+pick, Steps 1–2 (get the real source, find the prerequisites and the hardest concept) run
+unchanged — the understanding work is identical; only the deliverable's shape differs.
+
+- **Lesson (default).** The full chaptered write-up of Steps 3–6: orientation,
+  roadmap, one-takeaway chapters, the slowed-down deep dive, diagrams where they
+  earn it, a reading list. Best for genuinely learning something new.
+- **Flashcards.** A deck of question→answer cards for active recall and spaced
+  repetition, built from the same understanding: ordered easy→hard, the hardest concept gets
+  the most cards, the hardest idea decomposed across a short sequence. The
+  card-writing craft and the per-destination syntax (plain Q/A in the terminal,
+  Obsidian Spaced-Repetition / Anki syntax in a file) live in
+  `references/flashcards.md` — read it before writing a deck.
+- **Dense / concise.** The mental model compressed to its essence — a tight
+  cheat-sheet, not a tutorial. Keep the hardest idea, the key definitions, the "what breaks
+  without it," and at most one minimal worked example; cut the orientation, the
+  analogies, and the hand-holding. Best for review or a learner already near the
+  level. It deliberately drops the scaffolding that makes a hard idea land the
+  *first* time — so if the user seems new to the topic, say the default would serve
+  them better rather than silently handing over a terse version they can't yet parse.
+
+Read the style from the request ("make flashcards", "Anki cards", "just a
+concise/dense version", "cheat sheet") and default to the full lesson otherwise.
+Style and destination are independent — any style can go to the terminal, a Markdown
+file, or Obsidian; flashcards in particular pair naturally with Obsidian's
+spaced-repetition workflow.
+
 ## Step 1 — Get the real source material first
 
 Never teach from a guess about what a link says. Get the actual content before you
@@ -79,17 +109,21 @@ write a word of the lesson.
   read the source, say so plainly and ask for a paste or a different link rather
   than hallucinating a lesson about a page you never saw.
 
-## Step 2 — Understand it well enough to find the crux
+## Step 2 — Understand it well enough to find the hardest concept
 
 Before structuring anything, read for two things:
 
 1. **The prerequisites** — what must the learner already know for this to make
    sense? Name them, so they can self-check and brush up if needed.
-2. **The crux** — the single hardest concept, the one where understanding usually
-   breaks. Most explanations rush exactly this part. This skill deliberately slows
-   down there (Step 4). Pick it consciously now; the lesson is built around it.
+2. **The hardest concept** — the single idea where understanding usually breaks.
+   Most explanations rush exactly this part. This skill deliberately slows down
+   there (Step 4). Pick it consciously now; the lesson is built around it.
 
 ## Step 3 — Write the lesson, chaptered
+
+*Steps 3–6 describe the **default lesson** shape. If the user asked for flashcards
+or a dense version, follow "What shape the lesson takes" above instead — the work
+in Steps 1–2 (source, prerequisites, hardest concept) still applies either way.*
 
 Lead the learner from familiar to unfamiliar, one idea at a time. Use this shape
 as a strong default, adapting depth and chapter count to the topic — a single
@@ -110,7 +144,7 @@ if they need to brush up — "comfortable with pointers? if not, skim X first">
 ## 2. <…>
 ## 3. <…>
 
-## Deep dive: <the crux from Step 2>
+## Deep dive: <the hardest concept from Step 2>
 
 ## Recap — the mental model to keep
 
@@ -138,7 +172,7 @@ What makes the chapters *teach* rather than just inform:
 
 ## Step 4 — The deep dive on the hardest concept
 
-Give the crux its own section and genuinely slow down. The pattern that works:
+Give the hardest concept its own section and genuinely slow down. The pattern that works:
 
 1. **Name why it's hard** — "the confusing part is that X and Y sound like the
    same thing but aren't," or "people expect this to be sequential, but it's not."
@@ -200,5 +234,5 @@ stopped.
 ## The throughline
 
 Every choice above serves one test: *after reading this once, can the learner
-explain the crux to someone else?* If a chapter, diagram, or paragraph doesn't move
+explain the hardest concept to someone else?* If a chapter, diagram, or paragraph doesn't move
 them toward that, cut it. Coverage is not the goal; transfer is.
