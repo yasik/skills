@@ -1,0 +1,19 @@
+sequenceDiagram
+  participant U as user-facing agent
+  participant B as runtime bus
+  participant R as retrieval agent
+  participant H as human review
+
+  U->>+B: dispatch request
+  B->>+R: fetch context
+  R-->>-B: context
+  loop every policy
+    B->>B: check policy
+  end
+  alt needs approval
+    B->>+H: request approval
+    H-->>-B: approved
+  else auto-approved
+    Note over B: skip human step
+  end
+  B-->>-U: aggregated result

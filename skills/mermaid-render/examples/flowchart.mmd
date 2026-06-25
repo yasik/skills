@@ -1,0 +1,10 @@
+flowchart TD
+  U["user-facing agent"]:::entry --> BUS["runtime message bus"]:::hub
+  BUS --> R["retrieval agent"]
+  BUS --> S["safety review agent"]
+  BUS --> P["policy agent"]
+  BUS -->|dispatch| H["human review task"]:::human
+  R --> AGG["aggregated result"]:::accent
+  S --> AGG
+  P --> AGG
+  H --> AGG
