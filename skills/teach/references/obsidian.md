@@ -64,13 +64,37 @@ widen `-maxdepth` only if nothing turns up.
 
 ## Where to put the note
 
-- **Folder.** Default to a `teach/` folder at the vault root. If the user named a
-  folder ("put it in my `Learning/CS` folder"), use that instead. Create it if it
-  doesn't exist: `mkdir -p "<vault>/<folder>"`.
-- **Filename.** A readable slug of the topic plus `.md` — e.g.
-  `teach/raft-consensus.md`. Strip characters illegal in filenames (`/ \ : * ? " < > |`).
-  If a file with that name already exists, don't clobber it silently — append a
-  disambiguator (a date or `-2`) or ask.
+### Folder
+
+The default home is a `teach/` folder at the vault root. How a user-named folder
+combines with it depends on whether the path is absolute or relative:
+
+- **No folder named** — use `teach/` at the vault root.
+- **Relative folder** ("store it in `fund/operations`", "put it in `Learning/CS`")
+  — nest it *under* the default `teach/` folder, i.e. write to `teach/fund/operations`.
+  The `teach/` prefix is the default home; a relative path lives inside it. The only
+  exception is when the user explicitly opts out of it ("not under teach", "at the
+  vault root", "directly in `Learning/CS`") — then use the relative path from the
+  vault root as given.
+- **Absolute path** ("save it to `/Users/me/Notes/Work/ops`", "`~/vault/archive`")
+  — use it verbatim as the destination folder. No `teach/` prefix; the user has
+  named the exact location.
+
+Create the target folder if it doesn't exist: `mkdir -p "<resolved-folder>"`.
+
+### Filename / note title
+
+Obsidian uses the filename as the note's displayed title, so write a readable,
+human title — **not** a hyphenated slug. Title-case the topic with spaces preserved:
+capitalize the first word and keep proper nouns and acronyms in their natural casing
+(Raft, TLS, HTTP), lowercase the rest. Then add `.md`.
+
+- `Tech fund day to day operations.md` — **not** `tech-fund-day-to-day-operations.md`
+- `Raft consensus.md`, `How TLS handshakes work.md`
+
+Strip characters illegal in filenames (`/ \ : * ? " < > |`) — spaces are fine and
+preferred. If a file with that name already exists, don't clobber it silently —
+append a disambiguator (a date or ` 2`) or ask.
 
 ## What to write
 

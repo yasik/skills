@@ -44,9 +44,11 @@ and only ask when it's genuinely ambiguous.
   exact path you wrote.
 - **Obsidian vault.** When the user mentions Obsidian, "my vault", or "my notes",
   write the lesson as a note inside their local vault: locate the vault(s), pick
-  one (ask if there's more than one), and save under a `teach/` folder by default —
-  or a folder the user names. Read `references/obsidian.md` for the full procedure
-  (finding vaults, choosing one, naming and placing the note) before you write.
+  one (ask if there's more than one), and save under a `teach/` folder by default.
+  A relative folder the user names nests inside `teach/`; an absolute path is used
+  as-is; the note's filename is a readable title, not a slug. Read
+  `references/obsidian.md` for the full procedure (finding vaults, choosing one,
+  naming and placing the note) before you write.
 
 Skills don't receive parsed flags — the input is just natural-language text, so the
 target lives in the request's phrasing ("…and drop it in my Obsidian", "save it to

@@ -58,7 +58,9 @@ request — "save it to a file", "drop it in my vault" — and it can instead:
 - **Write a Markdown file** to a path you name, or `./<topic-slug>.md` by default.
 - **Drop a note into your Obsidian vault.** It finds your local vault(s) (asking
   which one if you have several), then saves the lesson under a `teach/` folder
-  by default — or any folder you name.
+  by default. A relative folder you name nests inside `teach/`; an absolute path is
+  used as-is. The note's title is readable (e.g. `Tech fund day to day operations`),
+  not a hyphenated slug.
 
 ### Using each option
 
@@ -91,8 +93,11 @@ explain this paper <link> and save it to my notes under Learning/Distributed
 ```
 
 It locates your local vault(s), asks which one if you have more than one, and saves
-the note under a `teach/` folder unless you name another (like `Learning/Distributed`
-above). When it's done it tells you the exact path and vault.
+the note under a `teach/` folder. A relative folder you name (like
+`Learning/Distributed` above) nests inside it — `teach/Learning/Distributed` —
+unless you opt out ("at the vault root", "not under teach"); an absolute path is
+used exactly as given. The filename is a readable title rather than a slug. When
+it's done it tells you the exact path and vault.
 
 Prefer the terse form? Shorthand like this works too, read as plain text:
 
