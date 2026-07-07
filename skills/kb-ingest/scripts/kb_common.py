@@ -36,18 +36,26 @@ import os
 import re
 from datetime import date
 from pathlib import Path
-from typing import TypeAlias
+from typing import cast
 
-Frontmatter: TypeAlias = dict[str, str | list[str]]
+type Frontmatter = dict[str, str | list[str]]
 """Parsed page frontmatter — a genuinely dynamic map, read at trust boundaries."""
 
-LinkIndex: TypeAlias = set[str]
+type LinkIndex = set[str]
 """Normalized link keys ([[target]] forms) that resolve to existing files."""
 
-PAGE_TYPES: frozenset[str] = frozenset({"entity", "concept", "project", "decision", "report"})
+PAGE_TYPES: frozenset[str] = frozenset(
+    {"entity", "concept", "project", "decision", "report"}
+)
 CONFIDENCE_LEVELS: frozenset[str] = frozenset({"high", "medium", "low"})
 REQUIRED_FIELDS: tuple[str, ...] = (
-    "type", "created", "updated", "author", "confidence", "sources", "tags",
+    "type",
+    "created",
+    "updated",
+    "author",
+    "confidence",
+    "sources",
+    "tags",
 )
 NON_PAGE_KB_FILES: frozenset[str] = frozenset({"INDEX.md", "LOG.md", "SCHEMA.md"})
 """KB files that are not pages and are never validated as pages."""
@@ -70,9 +78,6 @@ class KBNotFoundError(KBError):
 
 class KBConfigError(KBError):
     """A `.kb.json` exists but is malformed or points at a missing directory."""
-
-
-# ------------------------------------------------------------ discovery
 
 
 class KB:
@@ -99,7 +104,9 @@ class KB:
     def org(self) -> dict[str, object] | None:
         """Org-extension config dict, or None when not an org installation."""
         org = self.config.get("org")
-        return org if isinstance(org, dict) else None
+        if not isinstance(org, dict):
+            return None
+        return cast(dict[str, object], org)
 
     def rel(self, path: Path | str) -> str:
         """Render `path` relative to the workspace for stable display."""
@@ -130,7 +137,8 @@ def _load_config(directory: Path) -> dict[str, object]:
         raise KBConfigError(f"{config_path} is not valid JSON: {exc}") from exc
     if not isinstance(parsed, dict):
         raise KBConfigError(f"{config_path} must contain a JSON object")
-    return parsed
+    # Trust boundary: raw JSON is parsed exactly once, here.
+    return cast(dict[str, object], parsed)
 
 
 def _is_kb_root(directory: Path) -> bool:
@@ -161,7 +169,8 @@ def resolve_kb(directory: Path | str) -> KB | None:
         if not root.is_dir():
             raise KBConfigError(
                 f"{p / CONFIG_FILENAME} points at '{config.get('root', DEFAULT_KB_DIRNAME)}' "
-                "but that directory does not exist")
+                "but that directory does not exist"
+            )
         return KB(root, p, config)
 
     if _is_kb_root(p):
@@ -197,7 +206,8 @@ def find_kb(explicit: str | None = None) -> KB:
         if kb is None:
             raise KBNotFoundError(
                 f"{explicit} is not a KB root (no SCHEMA.md/LOG.md), has no "
-                f"{CONFIG_FILENAME}, and contains no {DEFAULT_KB_DIRNAME}/ directory")
+                f"{CONFIG_FILENAME}, and contains no {DEFAULT_KB_DIRNAME}/ directory"
+            )
         return kb
 
     env_value = os.environ.get(KB_ROOT_ENV_VAR)
@@ -212,7 +222,8 @@ def find_kb(explicit: str | None = None) -> KB:
 
     raise KBNotFoundError(
         f"could not locate a KB — pass --kb <path>, set {KB_ROOT_ENV_VAR}, or run inside "
-        f"a workspace with a {CONFIG_FILENAME}, a SCHEMA.md/LOG.md, or a kb/ directory")
+        f"a workspace with a {CONFIG_FILENAME}, a SCHEMA.md/LOG.md, or a kb/ directory"
+    )
 
 
 def kb_for_file(file_path: Path | str) -> KB | None:
@@ -240,9 +251,6 @@ def kb_for_file(file_path: Path | str) -> KB | None:
     return None
 
 
-# ---------------------------------------------------------- frontmatter
-
-
 def split_frontmatter(text: str) -> tuple[str | None, str]:
     """Split a page into (frontmatter_raw or None, body)."""
     if not text.startswith("---"):
@@ -251,7 +259,7 @@ def split_frontmatter(text: str) -> tuple[str | None, str]:
     lines = text.split("\n")
     for i, line in enumerate(lines[1:], start=1):
         if line.strip() == "---":
-            return "\n".join(lines[1:i]), "\n".join(lines[i + 1:])
+            return "\n".join(lines[1:i]), "\n".join(lines[i + 1 :])
 
     return None, text
 
@@ -303,7 +311,10 @@ def parse_frontmatter(raw: str) -> Frontmatter:
 
         key_match = re.match(r"^([A-Za-z_][\w-]*):\s*(.*)$", line)
         if key_match:
-            current_key, value = key_match.group(1), key_match.group(2).strip()
+            current_key, value = (
+                str(key_match.group(1)),
+                str(key_match.group(2)).strip(),
+            )
             value = re.sub(r"\s+#\s.*$", "", value)  # trailing ' # comment'
             if value == "":
                 data[current_key] = []  # block list may follow
@@ -326,9 +337,6 @@ def read_page(path: Path | str) -> tuple[Frontmatter | None, str]:
     text = Path(path).read_text(encoding="utf-8")
     raw, body = split_frontmatter(text)
     return (parse_frontmatter(raw) if raw is not None else None), body
-
-
-# ---------------------------------------------------------------- pages
 
 
 def _has_hidden_part(rel: Path) -> bool:
@@ -357,11 +365,11 @@ def iter_sources(kb: KB) -> list[Path]:
     sources_dir = kb.root / "sources"
     if not sources_dir.is_dir():
         return []
-    return [p for p in sorted(sources_dir.rglob("*.md"))
-            if not _has_hidden_part(p.relative_to(sources_dir))]
-
-
-# ---------------------------------------------------------------- links
+    return [
+        p
+        for p in sorted(sources_dir.rglob("*.md"))
+        if not _has_hidden_part(p.relative_to(sources_dir))
+    ]
 
 
 def extract_wikilinks(text: str) -> list[str]:
@@ -402,12 +410,12 @@ def link_resolves(target: str, link_index: LinkIndex) -> bool:
     return t in link_index
 
 
-# ----------------------------------------------------------- validation
-
-
 def _validate_sources_field(
-    sources: object, kb: KB, link_index: LinkIndex | None,
-    errors: list[str], warnings: list[str],
+    sources: str | list[str] | None,
+    kb: KB,
+    link_index: LinkIndex | None,
+    errors: list[str],
+    warnings: list[str],
 ) -> None:
     """Apply the provenance rule to the `sources:` frontmatter field."""
     if sources is None:
@@ -416,10 +424,12 @@ def _validate_sources_field(
         errors.append("sources must be a list")
         return
     if not sources:
-        errors.append("sources is empty — every page declares provenance: external "
-                      "claims point into sources/, internal artifacts point at "
-                      "their origin (another page, a dated note, the work that "
-                      "produced them)")
+        errors.append(
+            "sources is empty — every page declares provenance: external "
+            "claims point into sources/, internal artifacts point at "
+            "their origin (another page, a dated note, the work that "
+            "produced them)"
+        )
         return
 
     if link_index is None:
@@ -430,18 +440,26 @@ def _validate_sources_field(
         if targets:
             for target in targets:
                 if not link_resolves(target, link_index):
-                    errors.append(f"sources entry [[{target}]] does not resolve to a file")
+                    errors.append(
+                        f"sources entry [[{target}]] does not resolve to a file"
+                    )
         elif re.match(r"^https?://", entry):
-            warnings.append(f"sources entry is a bare URL ({entry}) — allowed for "
-                            "incidental facts, but fetched-and-filed sources are "
-                            "lint-verifiable; consider filing into sources/")
+            warnings.append(
+                f"sources entry is a bare URL ({entry}) — allowed for "
+                "incidental facts, but fetched-and-filed sources are "
+                "lint-verifiable; consider filing into sources/"
+            )
         else:
-            errors.append(f"sources entry '{entry}' is neither a [[wikilink]] nor a URL")
+            errors.append(
+                f"sources entry '{entry}' is neither a [[wikilink]] nor a URL"
+            )
 
 
 def validate_page_data(
-    path: Path | str, kb: KB,
-    link_index: LinkIndex | None = None, today: str | None = None,
+    path: Path | str,
+    kb: KB,
+    link_index: LinkIndex | None = None,
+    today: str | None = None,
 ) -> tuple[list[str], list[str]]:
     """Validate one page against the KB page schema.
 
@@ -467,17 +485,23 @@ def validate_page_data(
     try:
         rel = page_path.relative_to(kb.root)
     except ValueError:
-        return [f"not a KB page — this validator only applies to files under the KB root "
-                f"({kb.root})"], []
+        return [
+            f"not a KB page — this validator only applies to files under the KB root "
+            f"({kb.root})"
+        ], []
 
     if rel.parts and rel.parts[0] == "sources":
-        return ["path is under sources/ — sources are append-only raw material, "
-                "never validated or edited as pages"], []
+        return [
+            "path is under sources/ — sources are append-only raw material, "
+            "never validated or edited as pages"
+        ], []
     if page_path.name == "INDEX.md":
         return ["INDEX.md is script-generated — never written by hand"], []
     if page_path.name in ("LOG.md", "SCHEMA.md"):
-        return [f"{page_path.name} is not a page (LOG.md is append-only via kb_log.py; "
-                "SCHEMA.md is the owner's convention doc)"], []
+        return [
+            f"{page_path.name} is not a page (LOG.md is append-only via kb_log.py; "
+            "SCHEMA.md is the owner's convention doc)"
+        ], []
     if not page_path.exists():
         return ["file does not exist"], []
 
@@ -495,7 +519,9 @@ def validate_page_data(
 
     confidence = frontmatter.get("confidence")
     if isinstance(confidence, str) and confidence not in CONFIDENCE_LEVELS:
-        errors.append(f"confidence '{confidence}' not one of {sorted(CONFIDENCE_LEVELS)}")
+        errors.append(
+            f"confidence '{confidence}' not one of {sorted(CONFIDENCE_LEVELS)}"
+        )
 
     for field in ("created", "updated"):
         value = frontmatter.get(field)
@@ -503,14 +529,23 @@ def validate_page_data(
             errors.append(f"{field} is not an ISO date (YYYY-MM-DD): '{value}'")
 
     created, updated = frontmatter.get("created"), frontmatter.get("updated")
-    if (isinstance(created, str) and isinstance(updated, str)
-            and DATE_RE.match(created) and DATE_RE.match(updated) and updated < created):
+    if (
+        isinstance(created, str)
+        and isinstance(updated, str)
+        and DATE_RE.match(created)
+        and DATE_RE.match(updated)
+        and updated < created
+    ):
         errors.append("updated date is before created date")
     if isinstance(updated, str) and DATE_RE.match(updated) and updated != today:
-        warnings.append(f"updated ({updated}) is not today ({today}) — "
-                        "bump it if you just modified this page")
+        warnings.append(
+            f"updated ({updated}) is not today ({today}) — "
+            "bump it if you just modified this page"
+        )
 
-    _validate_sources_field(frontmatter.get("sources"), kb, link_index, errors, warnings)
+    _validate_sources_field(
+        frontmatter.get("sources"), kb, link_index, errors, warnings
+    )
 
     if isinstance(frontmatter.get("tags"), str):
         errors.append("tags must be a list (use [] if none)")
@@ -528,8 +563,11 @@ def parse_log_dates(kb: KB) -> set[str]:
     log_path = kb.root / "LOG.md"
     if not log_path.exists():
         return set()
-    return set(re.findall(r"^##\s*\[(\d{4}-\d{2}-\d{2})\]",
-                          log_path.read_text(encoding="utf-8"), re.M))
+    return set(
+        re.findall(
+            r"^##\s*\[(\d{4}-\d{2}-\d{2})\]", log_path.read_text(encoding="utf-8"), re.M
+        )
+    )
 
 
 def today_iso() -> str:

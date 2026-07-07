@@ -20,27 +20,39 @@ Fails open: any unexpected error exits 0 silently.
 import json
 import sys
 from pathlib import Path
+from typing import cast
 
 # The canonical validator lives in the bundled kb-ingest skill:
 # <plugin>/hooks/scripts/kb_post_write.py -> <plugin>/skills/kb-ingest/scripts.
 # If the skill directory is missing (broken symlink, partial install), the
-# hook stays silent instead of breaking the session.
-sys.path.insert(0, str((Path(__file__).resolve().parent.parent.parent
-                        / "skills" / "kb-ingest" / "scripts").resolve()))
+# hook has no opinion and exits 0 — fail open, never break the session.
+sys.path.insert(
+    0,
+    str(
+        (
+            Path(__file__).resolve().parent.parent.parent
+            / "skills"
+            / "kb-ingest"
+            / "scripts"
+        ).resolve()
+    ),
+)
+
+# isort: off
 try:
     from kb_common import KB, kb_for_file, validate_page_data
-except Exception:  # noqa: BLE001 — hook boundary, degrade to no-op
-    KB = None  # type: ignore[assignment,misc]
-    kb_for_file = None
-    validate_page_data = None
+except Exception:  # hook boundary: fail open on a broken install
+    sys.exit(0)
+# isort: on
 
 VALID_PAGE_REMINDER = (
     "KB page write validated OK. kb-ingest reminders: sweep cross-references "
     "on related pages, then log the operation via kb_log.py — one entry per "
-    "ingest, listing every touched file.")
+    "ingest, listing every touched file."
+)
 
 
-def is_kb_page(path: str, kb: "KB") -> bool:
+def is_kb_page(path: str, kb: KB) -> bool:
     """Check whether `path` is a wiki page (not a source or a non-page file)."""
     rel = Path(path).resolve().relative_to(kb.root)
 
@@ -55,12 +67,14 @@ def main() -> None:
     # Hook boundary: any unexpected failure exits 0 with no output so a
     # validator bug can never block unrelated tool calls.
     try:
-        if kb_for_file is None or validate_page_data is None:
+        # Trust boundary: the hook payload is raw JSON, read exactly once here.
+        payload: object = json.load(sys.stdin)
+        if not isinstance(payload, dict):
             sys.exit(0)
-
-        payload = json.load(sys.stdin)
-        tool_input = payload.get("tool_input") or {}
-        file_path = tool_input.get("file_path") if isinstance(tool_input, dict) else None
+        raw_tool_input = cast(dict[str, object], payload).get("tool_input")
+        if not isinstance(raw_tool_input, dict):
+            sys.exit(0)
+        file_path = cast(dict[str, object], raw_tool_input).get("file_path")
         if not isinstance(file_path, str) or not Path(file_path).exists():
             sys.exit(0)
 
@@ -70,19 +84,29 @@ def main() -> None:
 
         errors, _warnings = validate_page_data(file_path, kb)
         if errors:
-            print(json.dumps({
-                "decision": "block",
-                "reason": ("KB page failed validation (kb-ingest protocol) — fix before "
-                           "moving on:\n- " + "\n- ".join(errors)),
-            }))
+            print(
+                json.dumps(
+                    {
+                        "decision": "block",
+                        "reason": (
+                            "KB page failed validation (kb-ingest protocol) — fix before "
+                            "moving on:\n- " + "\n- ".join(errors)
+                        ),
+                    }
+                )
+            )
         else:
-            print(json.dumps({
-                "hookSpecificOutput": {
-                    "hookEventName": "PostToolUse",
-                    "additionalContext": VALID_PAGE_REMINDER,
-                }
-            }))
-    except Exception:  # noqa: BLE001 — fail open
+            print(
+                json.dumps(
+                    {
+                        "hookSpecificOutput": {
+                            "hookEventName": "PostToolUse",
+                            "additionalContext": VALID_PAGE_REMINDER,
+                        }
+                    }
+                )
+            )
+    except Exception:  # noqa: S110 — fail open by contract (see module docstring)
         pass
 
     sys.exit(0)

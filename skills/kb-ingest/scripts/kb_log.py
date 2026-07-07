@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Append a canonical entry to the KB's LOG.md.
+r"""Append a canonical entry to the KB's LOG.md.
 
 The log format is parsed by lint and by humans skimming history, so entries
 are always written through this script — never by hand. One line per
@@ -23,7 +23,11 @@ from enum import StrEnum
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from kb_common import KBError, find_kb, today_iso
+
+# isort: off
+from kb_common import KBError, find_kb, today_iso  # noqa: E402
+
+# isort: on
 
 LOG_HEADER = """# KB Log
 
@@ -52,12 +56,17 @@ def format_entry(action: str, title: str, agent: str, pages: list[str]) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--action", required=True, choices=[a.value for a in LogAction])
-    parser.add_argument("--title", required=True,
-                        help="short human-readable summary of the operation")
-    parser.add_argument("--agent", required=True,
-                        help="author identity (your name, or the agent id in org installations)")
-    parser.add_argument("--pages", nargs="*", default=[],
-                        help="paths touched (KB-relative preferred)")
+    parser.add_argument(
+        "--title", required=True, help="short human-readable summary of the operation"
+    )
+    parser.add_argument(
+        "--agent",
+        required=True,
+        help="author identity (your name, or the agent id in org installations)",
+    )
+    parser.add_argument(
+        "--pages", nargs="*", default=[], help="paths touched (KB-relative preferred)"
+    )
     parser.add_argument("--kb", default=None, help="KB root or workspace path")
     args = parser.parse_args()
 

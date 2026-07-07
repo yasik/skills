@@ -27,14 +27,27 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from kb_common import KBError, build_link_index, find_kb, validate_page_data
+
+# isort: off
+from kb_common import (
+    KBError,
+    build_link_index,
+    find_kb,
+    validate_page_data,
+)  # noqa: E402
+
+# isort: on
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("pages", nargs="+", help="page paths (absolute or relative to cwd)")
+    parser.add_argument(
+        "pages", nargs="+", help="page paths (absolute or relative to cwd)"
+    )
     parser.add_argument("--kb", default=None, help="KB root or workspace path")
-    parser.add_argument("--strict", action="store_true", help="treat warnings as errors")
+    parser.add_argument(
+        "--strict", action="store_true", help="treat warnings as errors"
+    )
     args = parser.parse_args()
 
     # CLI boundary: discovery/config failures become exit messages here.

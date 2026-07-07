@@ -28,13 +28,15 @@ import argparse
 import json
 import subprocess
 import sys
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from datetime import date, timedelta
 from enum import StrEnum
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
-from kb_common import (
+
+# isort: off
+from kb_common import (  # noqa: E402
     DATE_RE,
     KB,
     Frontmatter,
@@ -51,6 +53,8 @@ from kb_common import (
     today_iso,
     validate_page_data,
 )
+
+# isort: on
 
 
 class Severity(StrEnum):
@@ -80,12 +84,14 @@ class Finding:
 class PageMeta:
     """Per-page data collected once and shared across checks."""
 
-    frontmatter: Frontmatter = field(default_factory=dict)
-    links: list[str] = field(default_factory=list)
+    frontmatter: Frontmatter
+    links: list[str]
 
 
 def check_pages(
-    kb: KB, link_index: LinkIndex, max_lines: int,
+    kb: KB,
+    link_index: LinkIndex,
+    max_lines: int,
 ) -> tuple[dict[str, PageMeta], list[Finding]]:
     """Run per-page checks: invalid-page, broken-link, oversized-page.
 
@@ -106,17 +112,31 @@ def check_pages(
             findings.append(Finding("invalid-page", Severity.ERROR, rel, error))
 
         frontmatter, body = read_page(page)
-        meta[rel] = PageMeta(frontmatter=frontmatter or {}, links=extract_wikilinks(body))
+        meta[rel] = PageMeta(
+            frontmatter=frontmatter or {}, links=extract_wikilinks(body)
+        )
 
         for target in meta[rel].links:
             if not link_resolves(target, link_index):
-                findings.append(Finding("broken-link", Severity.ERROR, rel,
-                                        f"[[{target}]] resolves to nothing"))
+                findings.append(
+                    Finding(
+                        "broken-link",
+                        Severity.ERROR,
+                        rel,
+                        f"[[{target}]] resolves to nothing",
+                    )
+                )
 
         n_lines = body.count("\n") + 1
         if n_lines > max_lines:
-            findings.append(Finding("oversized-page", Severity.WARNING, rel,
-                                    f"{n_lines} lines (> {max_lines}) — consider splitting"))
+            findings.append(
+                Finding(
+                    "oversized-page",
+                    Severity.WARNING,
+                    rel,
+                    f"{n_lines} lines (> {max_lines}) — consider splitting",
+                )
+            )
 
     return meta, findings
 
@@ -134,12 +154,22 @@ def check_sources(kb: KB, meta: dict[str, PageMeta]) -> list[Finding]:
         cited.update(t.lower() for t in page_meta.links)
 
     for source in iter_sources(kb):
-        keys = {source.stem.lower(),
-                str(source.relative_to(kb.root).with_suffix("")).replace("\\", "/").lower(),
-                str(source.relative_to(kb.workspace).with_suffix("")).replace("\\", "/").lower()}
+        keys = {
+            source.stem.lower(),
+            str(source.relative_to(kb.root).with_suffix("")).replace("\\", "/").lower(),
+            str(source.relative_to(kb.workspace).with_suffix(""))
+            .replace("\\", "/")
+            .lower(),
+        }
         if not (keys & cited):
-            findings.append(Finding("unreferenced-source", Severity.WARNING, kb.rel(source),
-                                    "cited by no page — un-ingested intake work"))
+            findings.append(
+                Finding(
+                    "unreferenced-source",
+                    Severity.WARNING,
+                    kb.rel(source),
+                    "cited by no page — un-ingested intake work",
+                )
+            )
 
     findings.extend(_check_source_immutability(kb))
     return findings
@@ -157,19 +187,43 @@ def _check_source_immutability(kb: KB) -> list[Finding]:
         return []
 
     try:
-        output = subprocess.run(
-            ["git", "-C", str(sources_dir), "status", "--porcelain", "--", "."],
-            capture_output=True, text=True, check=True, timeout=30).stdout
-    except (subprocess.CalledProcessError, subprocess.TimeoutExpired, FileNotFoundError):
+        # Fixed argv (no shell), trusted constant command; `git` from PATH is
+        # the portable choice for a cross-machine dev tool.
+        output = subprocess.run(  # noqa: S603
+            [  # noqa: S607
+                "git",
+                "-C",
+                str(sources_dir),
+                "status",
+                "--porcelain",
+                "--",
+                ".",
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=30,
+        ).stdout
+    except (
+        subprocess.CalledProcessError,
+        subprocess.TimeoutExpired,
+        FileNotFoundError,
+    ):
         return []
 
     findings: list[Finding] = []
     for line in output.splitlines():
         status, path = line[:2], line[3:].strip()
         if "M" in status:
-            findings.append(Finding("source-modified", Severity.ERROR, path,
-                                    "sources are append-only; this file has been "
-                                    "modified — restore it from git"))
+            findings.append(
+                Finding(
+                    "source-modified",
+                    Severity.ERROR,
+                    path,
+                    "sources are append-only; this file has been "
+                    "modified — restore it from git",
+                )
+            )
     return findings
 
 
@@ -187,13 +241,22 @@ def check_orphans(meta: dict[str, PageMeta]) -> list[Finding]:
             if hit and hit != rel:
                 inbound[hit] += 1
 
-    return [Finding("orphan-page", Severity.WARNING, rel,
-                    "no inbound links from other pages — link it from a "
-                    "related entity/concept/project page")
-            for rel, count in inbound.items() if count == 0]
+    return [
+        Finding(
+            "orphan-page",
+            Severity.WARNING,
+            rel,
+            "no inbound links from other pages — link it from a "
+            "related entity/concept/project page",
+        )
+        for rel, count in inbound.items()
+        if count == 0
+    ]
 
 
-def check_log_consistency(kb: KB, meta: dict[str, PageMeta], window_days: int) -> list[Finding]:
+def check_log_consistency(
+    kb: KB, meta: dict[str, PageMeta], window_days: int
+) -> list[Finding]:
     """Flag recently-updated pages whose update date has no LOG.md entry."""
     log_dates = parse_log_dates(kb)
     cutoff = (date.today() - timedelta(days=window_days)).isoformat()
@@ -201,13 +264,23 @@ def check_log_consistency(kb: KB, meta: dict[str, PageMeta], window_days: int) -
     missing: dict[str, list[str]] = {}
     for rel, page_meta in meta.items():
         updated = page_meta.frontmatter.get("updated")
-        if (isinstance(updated, str) and DATE_RE.match(updated)
-                and updated >= cutoff and updated not in log_dates):
+        if (
+            isinstance(updated, str)
+            and DATE_RE.match(updated)
+            and updated >= cutoff
+            and updated not in log_dates
+        ):
             missing.setdefault(updated, []).append(rel)
 
-    return [Finding("unlogged-changes", Severity.WARNING, "LOG.md",
-                    f"pages updated {day} but no LOG entry that day: " + ", ".join(pages))
-            for day, pages in sorted(missing.items())]
+    return [
+        Finding(
+            "unlogged-changes",
+            Severity.WARNING,
+            "LOG.md",
+            f"pages updated {day} but no LOG entry that day: " + ", ".join(pages),
+        )
+        for day, pages in sorted(missing.items())
+    ]
 
 
 REPORT_TEMPLATE = """# KB Lint — {date}
@@ -240,7 +313,9 @@ def render_mechanical(findings: list[Finding]) -> str:
         by_check.setdefault(finding.check, []).append(finding)
 
     sections: list[str] = []
-    for check in sorted(by_check, key=lambda c: (by_check[c][0].severity != Severity.ERROR, c)):
+    for check in sorted(
+        by_check, key=lambda c: (by_check[c][0].severity != Severity.ERROR, c)
+    ):
         severity = by_check[check][0].severity.upper()
         sections.append(f"### {check} ({severity})")
         for finding in by_check[check]:
@@ -250,14 +325,27 @@ def render_mechanical(findings: list[Finding]) -> str:
     return "\n".join(sections).rstrip()
 
 
-def write_report(kb: KB, findings: list[Finding], agent: str,
-                 n_err: int, n_warn: int, report_dir: Path) -> Path:
+def write_report(
+    kb: KB,
+    findings: list[Finding],
+    agent: str,
+    n_err: int,
+    n_warn: int,
+    report_dir: Path,
+) -> Path:
     """Write the report skeleton and return its path."""
     report_dir.mkdir(parents=True, exist_ok=True)
     report_path = report_dir / f"{today_iso()}-mechanical.md"
-    report_path.write_text(REPORT_TEMPLATE.format(
-        date=today_iso(), agent=agent, n_err=n_err, n_warn=n_warn,
-        mechanical=render_mechanical(findings)), encoding="utf-8")
+    report_path.write_text(
+        REPORT_TEMPLATE.format(
+            date=today_iso(),
+            agent=agent,
+            n_err=n_err,
+            n_warn=n_warn,
+            mechanical=render_mechanical(findings),
+        ),
+        encoding="utf-8",
+    )
     return report_path
 
 
@@ -265,15 +353,22 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--kb", default=None, help="KB root or workspace path")
     parser.add_argument("--format", choices=["text", "json"], default="text")
-    parser.add_argument("--report", action="store_true",
-                        help="write <report-dir>/<date>-mechanical.md report skeleton")
-    parser.add_argument("--report-dir", default=None,
-                        help="override report directory (default: <kb>/.lint or "
-                             ".kb.json report_dir)")
+    parser.add_argument(
+        "--report",
+        action="store_true",
+        help="write <report-dir>/<date>-mechanical.md report skeleton",
+    )
+    parser.add_argument(
+        "--report-dir",
+        default=None,
+        help="override report directory (default: <kb>/.lint or "
+        ".kb.json report_dir)",
+    )
     parser.add_argument("--max-lines", type=int, default=300)
     parser.add_argument("--log-window-days", type=int, default=30)
-    parser.add_argument("--agent", default="librarian",
-                        help="author identity for the report header")
+    parser.add_argument(
+        "--agent", default="librarian", help="author identity for the report header"
+    )
     args = parser.parse_args()
 
     # CLI boundary: discovery/config failures become exit messages here.
@@ -292,15 +387,27 @@ def main() -> None:
     n_warn = len(findings) - n_err
 
     if args.format == "json":
-        print(json.dumps({"errors": n_err, "warnings": n_warn,
-                          "findings": [asdict(f) for f in findings]}, indent=2))
+        print(
+            json.dumps(
+                {
+                    "errors": n_err,
+                    "warnings": n_warn,
+                    "findings": [asdict(f) for f in findings],
+                },
+                indent=2,
+            )
+        )
     else:
-        print(f"KB lint (mechanical): {n_err} error(s), {n_warn} warning(s) "
-              f"across {len(meta)} page(s)\n")
+        print(
+            f"KB lint (mechanical): {n_err} error(s), {n_warn} warning(s) "
+            f"across {len(meta)} page(s)\n"
+        )
         print(render_mechanical(findings))
 
     if args.report:
-        report_dir = Path(args.report_dir).resolve() if args.report_dir else kb.report_dir
+        report_dir = (
+            Path(args.report_dir).resolve() if args.report_dir else kb.report_dir
+        )
         report_path = write_report(kb, findings, args.agent, n_err, n_warn, report_dir)
         print(f"\nreport skeleton written: {kb.rel(report_path)}")
 

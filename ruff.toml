@@ -1,0 +1,11 @@
+# Generic, formatter-friendly config (adapted from agentlane).
+[lint]
+select = ["B", "D3", "E", "F", "S", "UP"]
+
+# Keep behavior aligned with the agentlane setup.
+ignore = [
+  "E501", # line length handled by formatter
+  "E741", # allow ambiguous short names in legacy/scaffold code
+  "S101", # allow assert statements (useful in tests)
+  "S311", # allow non-cryptographic random usage
+]

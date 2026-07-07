@@ -1,0 +1,13 @@
+ignore: |
+  .venv/
+  node_modules/
+  kb-skills-workspace/
+
+rules:
+  quoted-strings: disable
+  empty-values:
+    forbid-in-block-mappings: true
+    forbid-in-flow-mappings: true
+  key-duplicates: {}
+  octal-values:
+    forbid-implicit-octal: true
