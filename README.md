@@ -17,7 +17,7 @@ A small, growing collection of skills I've productized for coding agents
 
 | Plugin | What it does |
 |---|---|
-| **[kb-operator](plugins/kb-operator/README.md)** | Packages `kb-ingest` + `kb-lint` with three agents (operator, librarian, intake) and hooks that enforce KB invariants at the tool-call level — generated `INDEX.md`, append-only `LOG.md` and `sources/`. Personal-KB-first core with an opt-in org extension for agent organizations (ownership routing, inbox handoffs). Works with Claude Code (`claude plugin marketplace add yasik/skills`) and OpenAI Codex. |
+| **[kb-operator](plugins/kb-operator/README.md)** | Packages `kb-ingest` + `kb-lint` with three agents (operator, librarian, intake) and hooks that enforce KB invariants at the tool-call level — generated `INDEX.md`, append-only `LOG.md` and `sources/`. Personal-KB-first core with an opt-in org extension for agent organizations (ownership routing, inbox handoffs). Works with Claude Code (`claude plugin marketplace add yasik/skills`) and OpenAI Codex. One-command setup: **`npx create-kb-operator`** ([installer](plugins/kb-operator/installer/README.md)) — scaffolds the KB, installs the plugin, and wires up [qmd](https://github.com/tobi/qmd) search. |
 
 See it in action: [docs/examples/finterm-13f.md](docs/examples/finterm-13f.md) — a
 stock-performance CLI built with `terminal-report`; and the
@@ -58,6 +58,26 @@ skills/<name>/SKILL.md   # each skill, in the flat layout the CLI discovers
 plugins/<name>/          # Claude Code / Codex plugins (skills symlinked from skills/)
 docs/                    # how-tos and examples
 ```
+
+(Plugin-specific tooling lives with its plugin — e.g. the KB installer is at
+`plugins/kb-operator/installer/`.)
+
+## Development
+
+Code consistency across Python, TypeScript/JS, and markdown is enforced by
+the Makefile harness (conventions in [docs/code-style](docs/code-style/README.md)):
+
+```bash
+make init        # uv sync (python dev tools) + bun install (installer)
+make format      # isort + black (python), biome (js)
+make lint        # isort/black --check, ruff, pyright, biome, yamllint, markdownlint
+make typecheck   # mypy + pyright in parallel (both strict)
+```
+
+Requires [uv](https://docs.astral.sh/uv/) and [bun](https://bun.sh);
+`markdownlint` is optional (`npm i -g markdownlint-cli`). Run `make lint`
+before committing — the skill scripts are dependency-free at runtime, but
+they are held to strict typing and the full lint suite in development.
 
 ## License
 

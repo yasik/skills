@@ -3,3 +3,6 @@ __pycache__/
 *.pyc
 .venv/
 kb-skills-workspace/
+plugins/kb-operator/installer/assets/
+docs/plans/*
+node_modules/

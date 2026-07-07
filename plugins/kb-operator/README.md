@@ -29,6 +29,19 @@ Bash-level writes are deliberately not intercepted — lint is the backstop.
 
 ## Quick start (personal KB)
 
+**Fastest path — the interactive installer.** Scaffolds the KB, initializes
+git, installs the plugin into detected CLIs, and wires up qmd search, with
+sensible defaults at every step:
+
+```bash
+npx create-kb-operator            # or point it at a dir / Obsidian vault
+```
+
+(Until the package is published to npm: `node plugins/kb-operator/installer/bin/create-kb-operator.mjs`
+from a clone of this repo.)
+
+**Manual paths** below, if you prefer to see every move.
+
 **Option A — your own base folder** (any directory name works):
 
 ```bash
@@ -123,10 +136,49 @@ cp codex/agents/*.toml ~/.codex/agents/      # personal
 # or <repo>/.codex/agents/ for project scope
 ```
 
-Codex caveats (documented, not hidden): the guard hook parses Codex
+Codex caveats: the guard hook parses Codex
 `apply_patch` payloads best-effort (`*** Update File:` / `*** Add File:`
 markers); the PostToolUse validator is Claude-only for now; project hooks
 require `.codex/` trust.
+
+## Search — wiring up qmd
+
+The protocol's dedup gate and query routing assume the KB is searchable.
+Everything works without a search backend — agents fall back to `INDEX.md` +
+grep — but real retrieval quality comes from
+[qmd](https://github.com/tobi/qmd): local-first hybrid search (BM25 +
+vectors + reranking, fully on-device) whose MCP server gives agents
+`query` / `get` / `multi_get` / `status` tools.
+
+**Automatic** — `npx create-kb-operator` (the Quick start installer) does
+all of the below interactively.
+
+**Manual** — five commands:
+
+```bash
+npm install -g @tobilu/qmd                  # or: bun install -g @tobilu/qmd
+
+qmd collection add <kb-root> --name mykb    # index the KB
+qmd context add qmd://mykb "Knowledge base: entities, concepts, projects, decisions, reports, and raw sources"
+qmd update                                  # build the BM25 index (fast, no models)
+qmd embed                                   # optional: semantic search — downloads ~2GB of local models
+
+claude mcp add --scope user qmd -- qmd mcp  # expose the tools to Claude Code
+```
+
+Codex — add to `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.qmd]
+command = "qmd"
+args = ["mcp"]
+```
+
+How the pieces get used: `qmd search` (BM25-only, instant) covers the
+ingest dedup gate and quick lookups; `qmd query` (hybrid + rerank) is for
+judgment-heavy retrieval; `get`/`multi_get` do bounded line-range reads.
+The context line matters — qmd feeds it to the reranker. Keep the index
+fresh alongside the hygiene jobs below: `qmd update && qmd embed`.
 
 ## Orchestration — running the KB on a schedule
 
@@ -137,7 +189,8 @@ sensible default cadence:
 |---|---|---|
 | Drain new sources into pages | `kb-intake` | daily, or after you drop material |
 | Full health check + report | `kb-librarian` | weekly |
-| Recompile `INDEX.md` / reindex search | your script (e.g. qmd) | with each of the above |
+| Reindex search | `qmd update && qmd embed` | with each of the above |
+| Recompile `INDEX.md` | your script | with each of the above |
 
 **Claude Code — native scheduling.** Use `/schedule` in a session to create a
 recurring routine (a cloud agent on a cron schedule), e.g. *"every Monday at
