@@ -1,0 +1,11 @@
+{
+  "name": "kb-operator",
+  "displayName": "KB Operator",
+  "description": "Knowledge-base operator for agent organizations: the kb-ingest write protocol and kb-lint health checks as skills, operator/librarian/intake agents, and hooks that enforce KB invariants (generated INDEX.md, append-only LOG.md and sources/) at the tool-call level. Built for Obsidian vaults following the LLM-wiki pattern.",
+  "version": "0.1.0",
+  "author": {
+    "name": "yasik"
+  },
+  "license": "MIT",
+  "keywords": ["knowledge-base", "obsidian", "wiki", "memory", "multi-agent"]
+}

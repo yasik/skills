@@ -1,0 +1,14 @@
+{
+  "name": "yasik-skills",
+  "owner": {
+    "name": "yasik"
+  },
+  "plugins": [
+    {
+      "name": "kb-operator",
+      "source": "./plugins/kb-operator",
+      "description": "Knowledge-base operator for agent organizations: kb-ingest write protocol and kb-lint health checks as skills, operator/librarian/intake agents, and hooks enforcing KB invariants in Obsidian vaults."
+    }
+  ],
+  "description": "Personal marketplace: productized skills and plugins for coding agents, including the kb-operator knowledge-base plugin."
+}
