@@ -10,6 +10,14 @@ A small, growing collection of skills I've productized for coding agents
 | **terminal-report** | Polished terminal output for CLIs and analysis tools — ANSI colors, aligned tables, sparklines, diverging bars, tagged progress logs. Triggers when you build a command-line tool or want output that looks "like a dashboard." | [docs/terminal-report.md](docs/terminal-report.md) |
 | **teach** | Turns a topic or a pile of links into one complete, self-paced lesson — chaptered, with the hardest concept slowed down and worked through, diagrams only where they help, and real citations to go deeper. Triggers on "teach me X", "explain this `<link>`", "help me understand …" — when the goal is understanding, not a TL;DR. | [docs/teach.md](docs/teach.md) |
 | **mermaid-render** | Renders a Mermaid diagram (flowchart, state, or sequence) as a beautiful, optionally **animated** SVG/PNG in a calm editorial style — role-coded nodes, data-flow animation, and every pixel driven by one config file. Triggers on "render / beautify / draw this diagram", "make this Mermaid nice", or turning a process or architecture into a polished diagram. | [docs/mermaid-render.md](docs/mermaid-render.md) |
+| **kb-ingest** | The write protocol for a markdown knowledge base — personal or shared (the [LLM-wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)) — every KB write follows one checklist: classify → file raw material → dedup → condense → sweep cross-references → validate → log. Ships dependency-free validation and logging scripts; KB location configurable via `.kb.json`. | [plugins/kb-operator](plugins/kb-operator/README.md) |
+| **kb-lint** | Health check for the same KB — a deterministic script (broken links, provenance, tampered sources, orphans, un-ingested intake) plus LLM judgment passes (contradictions, staleness, duplicates), with triage. | [plugins/kb-operator](plugins/kb-operator/README.md) |
+
+## Plugins
+
+| Plugin | What it does |
+|---|---|
+| **[kb-operator](plugins/kb-operator/README.md)** | Packages `kb-ingest` + `kb-lint` with three agents (operator, librarian, intake) and hooks that enforce KB invariants at the tool-call level — generated `INDEX.md`, append-only `LOG.md` and `sources/`. Personal-KB-first core with an opt-in org extension for agent organizations (ownership routing, inbox handoffs). Works with Claude Code (`claude plugin marketplace add yasik/skills`) and OpenAI Codex. |
 
 See it in action: [docs/examples/finterm-13f.md](docs/examples/finterm-13f.md) — a
 stock-performance CLI built with `terminal-report`; and the
@@ -47,6 +55,7 @@ ln -s "$PWD/skills/terminal-report" ~/.claude/skills/terminal-report
 
 ```
 skills/<name>/SKILL.md   # each skill, in the flat layout the CLI discovers
+plugins/<name>/          # Claude Code / Codex plugins (skills symlinked from skills/)
 docs/                    # how-tos and examples
 ```
 
