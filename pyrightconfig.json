@@ -1,9 +1,5 @@
 {
-  "include": [
-    "skills/kb-ingest/scripts",
-    "skills/kb-lint/scripts",
-    "plugins/kb-operator/hooks/scripts"
-  ],
+  "include": [],
   "venvPath": ".",
   "venv": ".venv",
   "pythonVersion": "3.12",
@@ -15,13 +11,11 @@
   "reportUnusedFunction": true,
   "reportUnusedVariable": true,
   "reportDuplicateImport": true,
-  "exclude": ["**/__pycache__", "**/.pytest_cache", ".venv", "venv", "kb-skills-workspace"],
-  "executionEnvironments": [
-    { "root": "skills/kb-ingest/scripts" },
-    { "root": "skills/kb-lint/scripts" },
-    {
-      "root": "plugins/kb-operator/hooks/scripts",
-      "extraPaths": ["skills/kb-ingest/scripts"]
-    }
+  "exclude": [
+    "**/__pycache__",
+    "**/.pytest_cache",
+    ".venv",
+    "venv",
+    "kb-skills-workspace"
   ]
 }
