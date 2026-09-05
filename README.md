@@ -10,6 +10,7 @@ A small, growing collection of skills I've productized for coding agents
 | **terminal-report** | Polished terminal output for CLIs and analysis tools — ANSI colors, aligned tables, sparklines, diverging bars, tagged progress logs. Triggers when you build a command-line tool or want output that looks "like a dashboard." | [docs/terminal-report.md](docs/terminal-report.md) |
 | **teach** | Turns a topic or a pile of links into one complete, self-paced lesson — chaptered, with the hardest concept slowed down and worked through, diagrams only where they help, and real citations to go deeper. Triggers on "teach me X", "explain this `<link>`", "help me understand …" — when the goal is understanding, not a TL;DR. | [docs/teach.md](docs/teach.md) |
 | **mermaid-render** | Renders a Mermaid diagram (flowchart, state, or sequence) as a beautiful, optionally **animated** SVG/PNG in a calm editorial style — role-coded nodes, data-flow animation, and every pixel driven by one config file. Triggers on "render / beautify / draw this diagram", "make this Mermaid nice", or turning a process or architecture into a polished diagram. | [docs/mermaid-render.md](docs/mermaid-render.md) |
+| **dev-docs** | Writes and reviews developer documentation to a complete, packaged technical-writing style guide (adapted from Google's) — second person, active voice, sentence-case headings, real procedures, code font and bold done right, the complete word list — with the whole guide packaged as local references and an index that maps every official page and section. Triggers on "write dev docs / a README / a quickstart / reference comments" or "review this against the style guide." | [docs/dev-docs.md](docs/dev-docs.md) |
 
 Looking for the knowledge-base tooling (kb-ingest / kb-lint / kb-operator)?
 It grew into its own project: **[kmd — Knowledge MarkDown](https://github.com/yasik/kmd)**
@@ -28,6 +29,8 @@ skills`) — point it at this repo and the skill you want:
 ```bash
 # install terminal-report for Claude Code, globally (~/.claude/skills)
 npx skills add yasik/skills --skill terminal-report -a claude-code -g
+# …or the docs-writing skill
+npx skills add yasik/skills --skill dev-docs -a claude-code -g
 ```
 
 - `-a, --agent` — target agent(s): `claude-code`, `cursor`, `cline`, `codex`, … (omit to choose interactively)

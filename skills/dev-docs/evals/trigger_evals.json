@@ -1,0 +1,22 @@
+[
+  {"query": "write developer documentation for this CLI following a proper technical writing style guide", "should_trigger": true},
+  {"query": "can you draft a quickstart for our REST API? we want it to read like real platform docs", "should_trigger": true},
+  {"query": "write a README for this repo — installation, usage, config. keep it in proper developer-docs style", "should_trigger": true},
+  {"query": "review this how-to page against the docs style guide and tell me what's off", "should_trigger": true},
+  {"query": "turn these engineering notes into a proper concept page for our docs site, the kind you'd see on a major platform's docs site", "should_trigger": true},
+  {"query": "write the API reference comments / docstrings for these public methods in proper reference-doc style", "should_trigger": true},
+  {"query": "is it 'set up' or 'setup', 'log in' or 'login'? check the docs word list", "should_trigger": true},
+  {"query": "rewrite this tutorial so it uses second person, active voice, sentence-case headings, and proper numbered procedures", "should_trigger": true},
+  {"query": "draft release notes for v2.3 of our SDK, technical-writer quality, cloud-docs tone", "should_trigger": true},
+  {"query": "write a troubleshooting page for the three most common deploy errors, developer docs style", "should_trigger": true},
+  {"query": "write a blog post announcing our new feature, punchy and fun", "should_trigger": false},
+  {"query": "proofread this cover letter and make it sound more confident", "should_trigger": false},
+  {"query": "fix this bug — my react useEffect runs twice on mount and double-fires the analytics event", "should_trigger": false},
+  {"query": "summarize this 40-page article into 3 bullet points for the standup notes", "should_trigger": false},
+  {"query": "teach me how raft consensus works, i want to really understand it", "should_trigger": false},
+  {"query": "share this google doc with the marketing team and give them edit access", "should_trigger": false},
+  {"query": "write a python function that parses this CSV of transactions and returns total spend per category", "should_trigger": false},
+  {"query": "render this mermaid flowchart as a nice svg for the slide deck", "should_trigger": false},
+  {"query": "what's the difference between TCP and UDP? one-line answer for a slack reply", "should_trigger": false},
+  {"query": "write marketing landing page copy for our SaaS pricing page", "should_trigger": false}
+]
