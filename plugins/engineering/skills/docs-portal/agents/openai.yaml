@@ -1,0 +1,4 @@
+interface:
+  display_name: "Documentation portal"
+  short_description: "Run the repository documentation build and checks"
+  default_prompt: "Use $docs-portal to discover and run applicable documentation checks after public documentation changes."

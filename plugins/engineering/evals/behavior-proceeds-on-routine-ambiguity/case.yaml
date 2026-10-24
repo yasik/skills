@@ -1,0 +1,10 @@
+schema_version: "1.1"
+name: behavior-proceeds-on-routine-ambiguity
+description: A routine open detail is decided, implemented, verified by running the CLI, and reported as an assumption
+tags: [behavior]
+runs: 3
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+context:
+  scaffold_script: setup.sh

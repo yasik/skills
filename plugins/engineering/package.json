@@ -1,0 +1,15 @@
+{
+  "name": "@yasik/engineering-skills",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Andrii\u2019s development workflow: minimal design, implementation, meaningful verification, review, and PR delivery.",
+  "license": "MIT",
+  "keywords": [
+    "pi-package"
+  ],
+  "pi": {
+    "skills": [
+      "./skills"
+    ]
+  }
+}

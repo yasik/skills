@@ -1,0 +1,10 @@
+schema_version: "1.1"
+name: behavior-review-is-read-only
+description: A report-only review produces findings without editing files
+tags: [behavior]
+runs: 3
+execution:
+  max_turns: 20
+  timeout_seconds: 600
+context:
+  scaffold_script: setup.sh

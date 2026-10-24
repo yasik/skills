@@ -21,6 +21,20 @@ stock-performance CLI built with `terminal-report`; and the
 [mermaid-render gallery](docs/examples/mermaid-render.md) — flowchart, state, and
 sequence renders with their Mermaid source.
 
+## Engineering plugin
+
+[Engineering](plugins/engineering/README.md) packages Andrii's full development
+cycle into 12 focused workflow skills, with two documentation dependencies:
+design, implementation, debugging, optimization, coding style, meaningful unit
+tests, simplification, code review, docs sync, PR creation, PR monitoring, and
+releases. An eval suite checks skill triggering and the quality bar.
+
+It includes Codex and Claude plugin manifests, Pi package metadata, and standard
+skill folders for Hermes, OpenCode, and other Agent Skills-compatible harnesses.
+The [plugin guide](plugins/engineering/README.md) has local installation commands;
+the [PR template](plugins/engineering/skills/create-pr/references/pr-template.md)
+is editable independently of the skill.
+
 ## Install
 
 Easiest is the [`skills` CLI](https://github.com/vercel-labs/skills) (`npx
@@ -54,6 +68,8 @@ ln -s "$PWD/skills/terminal-report" ~/.claude/skills/terminal-report
 
 ```
 skills/<name>/SKILL.md   # each skill, in the flat layout the CLI discovers
+plugins/engineering/     # self-contained development workflow plugin
+.claude-plugin/           # local marketplace catalog
 docs/                    # how-tos and examples
 ```
 

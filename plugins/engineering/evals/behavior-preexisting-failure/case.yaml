@@ -1,0 +1,10 @@
+schema_version: "1.1"
+name: behavior-preexisting-failure
+description: The agent records a baseline, keeps an unrelated failing test out of its diff, and reports it
+tags: [behavior]
+runs: 3
+execution:
+  max_turns: 30
+  timeout_seconds: 600
+context:
+  scaffold_script: setup.sh

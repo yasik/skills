@@ -1,0 +1,13 @@
+{
+  "name": "yasik-skills",
+  "owner": {
+    "name": "Andrii Yasinetsky"
+  },
+  "plugins": [
+    {
+      "name": "engineering",
+      "source": "./plugins/engineering",
+      "description": "Andrii\u2019s development workflow: minimal design, implementation, meaningful verification, review, and PR delivery."
+    }
+  ]
+}
