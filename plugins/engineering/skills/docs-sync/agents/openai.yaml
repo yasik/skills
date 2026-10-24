@@ -1,0 +1,4 @@
+interface:
+  display_name: "Docs Sync"
+  short_description: "Audit public docs coverage and propose concise updates"
+  default_prompt: "Use $docs-sync to review the repository's public documentation against the current implementation, then propose concise documentation updates."

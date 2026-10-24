@@ -1,0 +1,16 @@
+{
+  "name": "engineering",
+  "version": "0.1.0",
+  "description": "Andrii\u2019s development workflow: minimal design, implementation, meaningful verification, review, and PR delivery.",
+  "author": {
+    "name": "Andrii Yasinetsky"
+  },
+  "repository": "https://github.com/yasik/skills",
+  "license": "MIT",
+  "keywords": [
+    "engineering",
+    "code-review",
+    "testing",
+    "workflow"
+  ]
+}
